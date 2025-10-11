@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>成功 - Video Task</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0; padding:0; background:#f7f7fb; }
+    .wrap { max-width: 720px; margin: 8vh auto; background: #fff; padding: 28px; border-radius: 12px; box-shadow: 0 10px 30px rgba(10,10,30,.08); }
+    h1 { margin: 0 0 8px; font-weight: 650; font-size: 22px; }
+    .sub { color:#666; margin: 0 0 18px; }
+    .card { border:1px solid #eee; border-radius: 10px; padding: 16px; margin-top: 14px; display:flex; gap: 12px; align-items: center; }
+    .grow { flex: 1; }
+    code { background:#f3f4f6; padding: 4px 6px; border-radius: 6px; }
+    .btn { background:#4f46e5; color:#fff; border:none; border-radius: 8px; padding: 10px 12px; font-size: 14px; cursor: pointer; }
+    .btn.alt { background:#0ea5e9; }
+    .btn.secondary { background:#e5e7eb; color:#111827; }
+    .grid { display:grid; grid-template-columns: 1fr; gap: 12px; }
+    pre { background:#0b1022; color:#d1e4ff; padding:12px; border-radius: 8px; overflow:auto; font-size:12px; }
+    a { color:#4f46e5; text-decoration: none; }
+    .row { display:flex; gap: 8px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>工作区已就绪</h1>
+    <p class="sub">邮箱：<strong>{{ email }}</strong></p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="grow">
+          <div>JupyterLab 地址</div>
+          <div><code id="jupyter">{{ jupyter_url }}</code></div>
+        </div>
+        <div class="row">
+          <a class="btn" target="_blank" href="{{ jupyterlass="btn secondary" onclick="copy('#jupyter')">复制链接</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grow">
+          <div>你的应用地址（先在 Jupyter Terminal 启动监听 <code>9000</code>）</div>
+          <div><code id="app">{{ app_url }}</code></div>
+        </div>
+        <div class="row">
+          <a class="btn在新窗口打开</a>
+          <button class="btn secondary" onclick="copy('#app')">复制链接</button>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:20px;">如何启动你的应用？</h3>
+    <ol>
+      <li>打开 <a target="_blank" href="{{ jupyterTerminal」。</li>
+      <li>运行示例：
+        <pre>python -m http.server 9000
+# 或
+pip install fastapi uvicorn
+cat > app.py &lt;&lt;'PY'
+from fastapi import FastAPI
+app = FastAPI()
+@app.get("/")
+def hi():
+    return {"msg":"hello from inside pod"}
+PY
+uvicorn app:app --host 0.0.0.0 --port 9000</pre>
+      </li>
+      <li>然后访问 <code>{{ app_url }}</code> 即可打开你的应用。</li>
+    </ol>
+
+    <details style="margin-top: 16px;">
+      <summary>调试信息（K8s）</summary>
+      <pre>{{ k8s | tojson(indent=2) }}</pre>
+    </details>
+
+    <p style="margin-top: 16px;">
+      /login返回登录</a> |
+      <a href="/success?email }}复制此成功页链接</a>
+    </p>
+  </div>
+
+  <script>
+    async function copy(sel) {
+      const el = document.querySelector(sel);
+      const text = el ? el.textContent : '';
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = el.textContent;
+        el.textContent = old + '  (已复制)';
+        setTimeout(()=> { el.textContent = old; }, 1200);
+      } catch (e) {
+        alert('复制失败，请手动复制：' + text);
+      }
+    }
+  </script>
+</body>
+</html>

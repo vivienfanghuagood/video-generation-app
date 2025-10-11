@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Video Task - Progress</title>
+  <style>
+    body { font-family: sans-serif; margin: 24px; }
+    .bar { width: 400px; height: 16px; border: 1px solid #999; border-radius: 8px; overflow: hidden; }
+    .fill { height: 100%; width: 0%; background: #4caf50; transition: width .4s; }
+    code { background: #f6f8fa; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h2>Video Task - 进度面板</h2>
+  <label>Email: <input id="email" size="40" placeholder="alice@example.com"/></label>
+  <button id="start">创建（异步）</button>
+  <button id="query">仅查询状态</button>
+  <div style="margin-top:16px">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <p>状态：<span id="state">-</span>（<span id="progress">0</span>%）</p>
+    <p>Jupyter：#</a></p>
+    <p>应用：<a id="aurl" href="#" target="_ style="background:#f7f7f7; padding:12px; border:1px solid #ddd;"></pre>
+  </div>
+<script>
+const API_BASE = "http://<YOUR-API-HOST:PORT>"; // e.g., http://10.0.0.15:32188
+
+async function startAsync(email) {
+  const url = `${API_BASE}/video_task?email=${encodeURIComponent(email)}&async=1`;
+  const res = await fetch(url);
+  if (!res.ok) { alert("创建失败: " + (await res.text())); return; }
+  poll(email);
+}
+
+async function poll(email) {
+  const sUrl = `${API_BASE}/status?email=${encodeURIComponent(email)}`;
+  const res = await fetch(sUrl);
+  if (!res.ok) { console.log("status error", res.status); return; }
+  const data = await res.json();
+  document.getElementById('state').textContent = data.state;
+  document.getElementById('progress').textContent = data.progress;
+  document.getElementById('fill').style.width = data.progress + "%";
+  document.getElementById('details').textContent = JSON.stringify(data.details, null, 2);
+  const jurl = document.getElementById('jurl');
+  const aurl = document.getElementById('aurl');
+  jurl.textContent = data.jupyter_url || '';
+  jurl.href = data.jupyter_url || '#';
+  aurl.textContent = data.app_url || '';
+  aurl.href = data.app_url || '#';
+
+  if (data.state !== "READY") {
+    setTimeout(() => poll(email), 2000);
+  }
+}
+
+document.getElementById('start').onclick = () => {
+  const email = document.getElementById('email').value.trim();
+  if (!email) return alert("请输入 email");
+  startAsync(email);
+};
+document.getElementById('query').onclick = () => {
+  const email = document.getElementById('email').value.trim();
+  if (!email) return alert("请输入 email");
+  poll(email);
+};
+</script>
+</body>
+</html>
