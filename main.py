@@ -215,7 +215,7 @@ def create_pod_and_service(email: str, wait_ready: bool = True) -> Tuple[str, st
     cmd = [
         "bash", "-lc",
         "pip install --no-cache-dir jupyter ihighlight && "
-        f"jupyter lab --ServerApp.token='' --ServerApp.password='' "
+        f"cd /app && jupyter lab --ServerApp.token='' --ServerApp.password='' "
         f"--ServerApp.allow_origin='*' --ip=0.0.0.0 --port={CONTAINER_PORT_A} "
         f"--no-browser --allow-root --ServerApp.trust_xheaders=True"
     ]

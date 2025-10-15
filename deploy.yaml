@@ -22,11 +22,11 @@ spec:
         - name: SERVICE_TYPE
           value: "NodePort"          # 或 "LoadBalancer"
         - name: NOTEBOOK_IMAGE
-          value: "vv1005/aidev-workshop:latest"
+          value: "vv1005/aidev-workshop:v4"
         - name: ADMIN_TOKEN
           value: "admin"
         - name: CONTAINER_PORT_B
-          value: 8188
+          value: "9000"
         ports:
         - containerPort: 8088
 ---
